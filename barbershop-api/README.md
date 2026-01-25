@@ -33,6 +33,23 @@ API untuk sistem booking barbershop menggunakan Lumen Framework.
   - `ResponseHelper::success($data, $pesan, $statusCode)` - Response sukses
   - `ResponseHelper::error($pesan, $data, $statusCode)` - Response error
 
+### UUID System
+- **UsesUuid Trait**: Trait untuk auto-generate UUID pada model
+- **BaseModel**: Base class untuk semua model yang otomatis menggunakan UUID
+  - Primary key: String (36 char UUID)
+  - Non-incrementing
+  - Auto-generate saat create
+
+#### Cara Menggunakan UUID di Model:
+```php
+use App\Models\BaseModel;
+
+class YourModel extends BaseModel
+{
+    protected $fillable = ['name', 'description'];
+}
+```
+
 ### Format Response Standar
 ```json
 {
@@ -52,7 +69,7 @@ php -S localhost:8000 -t public
 ## Fase Pengembangan
 
 - [x] **FASE 1 - Langkah 1**: Setup Lumen, .env, dan Helper Response
-- [ ] **FASE 1 - Langkah 2**: UUID Setup & Trait
+- [x] **FASE 1 - Langkah 2**: UUID Setup & Trait
 - [ ] **FASE 1 - Langkah 3**: Migration User
 - [ ] **FASE 1 - Langkah 4**: Auth System
 
