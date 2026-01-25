@@ -14,5 +14,12 @@
 */
 
 $router->get('/', function () use ($router) {
-    return $router->app->version();
+    return response()->json([
+        'sukses' => true,
+        'pesan' => 'Barbershop API - Lumen',
+        'data' => [
+            'version' => $router->app->version(),
+            'timestamp' => date('Y-m-d H:i:s'),
+        ]
+    ]);
 });

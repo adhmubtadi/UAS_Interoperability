@@ -61,17 +61,60 @@ class YourModel extends BaseModel
 
 ## Development
 
-Jalankan server development:
+### 1. Setup Database
+Buat database terlebih dahulu:
+```bash
+# Lewat MySQL CLI atau phpMyAdmin
+CREATE DATABASE barbershop_db;
+```
+
+### 2. Jalankan Migration
+```bash
+php artisan migrate
+```
+
+### 3. Jalankan Server Development
 ```bash
 php -S localhost:8000 -t public
+```
+
+## API Endpoints
+
+### Auth Endpoints (Public)
+- `POST /api/auth/register` - Register user baru
+- `POST /api/auth/login` - Login user
+
+### Auth Endpoints (Protected - Butuh Token)
+- `POST /api/auth/logout` - Logout user
+- `GET /api/auth/profile` - Get user profile
+
+### Contoh Request:
+**Register:**
+```bash
+curl -X POST http://localhost:8000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"John Doe","email":"john@example.com","password":"123456","role":"customer"}'
+```
+
+**Login:**
+```bash
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"john@example.com","password":"123456"}'
+```
+
+**Profile (dengan token):**
+```bash
+curl -X GET http://localhost:8000/api/auth/profile \
+  -H "Authorization: Bearer {your-token-here}"
 ```
 
 ## Fase Pengembangan
 
 - [x] **FASE 1 - Langkah 1**: Setup Lumen, .env, dan Helper Response
 - [x] **FASE 1 - Langkah 2**: UUID Setup & Trait
-- [ ] **FASE 1 - Langkah 3**: Migration User
-- [ ] **FASE 1 - Langkah 4**: Auth System
+- [x] **FASE 1 - Langkah 3**: Migration User
+- [x] **FASE 1 - Langkah 4**: Auth System (Register, Login, Logout, Profile)
 
 ## Tech Stack
 
