@@ -32,4 +32,19 @@ $router->group(['middleware' => 'auth', 'namespace' => 'Api'], function () use (
     // Auth
     $router->post('auth/logout', 'AuthController@logout');
     $router->get('auth/profile', 'AuthController@profile');
+    
+    // Services
+    $router->get('services', 'ServiceController@index');
+    $router->post('services', 'ServiceController@store');
+    $router->get('services/{id}', 'ServiceController@show');
+    $router->put('services/{id}', 'ServiceController@update');
+    $router->delete('services/{id}', 'ServiceController@destroy');
+    
+    // Barbers
+    $router->get('barbers', 'BarberController@index');
+    $router->post('barbers', 'BarberController@store');
+    $router->get('barbers/{id}', 'BarberController@show');
+    $router->put('barbers/{id}', 'BarberController@update');
+    $router->patch('barbers/{id}/status', 'BarberController@updateStatus');
+    $router->delete('barbers/{id}', 'BarberController@destroy');
 });
