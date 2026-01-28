@@ -47,4 +47,11 @@ $router->group(['middleware' => 'auth', 'namespace' => 'Api'], function () use (
     $router->put('barbers/{id}', 'BarberController@update');
     $router->patch('barbers/{id}/status', 'BarberController@updateStatus');
     $router->delete('barbers/{id}', 'BarberController@destroy');
+    
+    // Bookings
+    $router->get('bookings', 'BookingController@index');
+    $router->post('bookings', 'BookingController@store');
+    $router->get('bookings/available-slots', 'BookingController@getAvailableSlots');
+    $router->get('bookings/{id}', 'BookingController@show');
+    $router->patch('bookings/{id}/status', 'BookingController@updateStatus');
 });
