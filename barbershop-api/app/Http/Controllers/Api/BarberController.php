@@ -50,14 +50,36 @@ class BarberController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'status' => 'in:available,busy,off',
-            'photo_url' => 'nullable|string|url'
+            'photo' => 'required|file|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         try {
+            $photoUrl = null;
+            
+            // Upload foto
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                
+                // Buat folder jika belum ada
+                $uploadPath = base_path('public/uploads/barbers');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                // Generate unique filename
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Pindahkan file ke folder uploads
+                $file->move($uploadPath, $filename);
+                
+                // Generate URL lengkap
+                $photoUrl = url('uploads/barbers/' . $filename);
+            }
+            
             $barber = Barber::create([
                 'name' => $request->name,
                 'status' => $request->status ?? 'available',
-                'photo_url' => $request->photo_url,
+                'photo_url' => $photoUrl,
             ]);
 
             return ResponseHelper::success($barber, 'Kapster berhasil ditambahkan', 201);
@@ -100,7 +122,7 @@ class BarberController extends Controller
         $this->validate($request, [
             'name' => 'sometimes|required|string|max:255',
             'status' => 'sometimes|required|in:available,busy,off',
-            'photo_url' => 'nullable|string|url'
+            'photo' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         try {
@@ -110,7 +132,39 @@ class BarberController extends Controller
                 return ResponseHelper::error('Kapster tidak ditemukan', null, 404);
             }
 
-            $barber->update($request->only(['name', 'status', 'photo_url']));
+            // Siapkan data untuk update
+            $updateData = $request->only(['name', 'status']);
+            
+            // Upload foto baru jika ada
+            if ($request->hasFile('photo')) {
+                $file = $request->file('photo');
+                
+                // Buat folder jika belum ada
+                $uploadPath = base_path('public/uploads/barbers');
+                if (!file_exists($uploadPath)) {
+                    mkdir($uploadPath, 0755, true);
+                }
+                
+                // Hapus foto lama jika ada
+                if ($barber->photo_url) {
+                    $oldFilename = basename($barber->photo_url);
+                    $oldFilePath = $uploadPath . '/' . $oldFilename;
+                    if (file_exists($oldFilePath)) {
+                        unlink($oldFilePath);
+                    }
+                }
+                
+                // Generate unique filename
+                $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                // Pindahkan file ke folder uploads
+                $file->move($uploadPath, $filename);
+                
+                // Generate URL lengkap
+                $updateData['photo_url'] = url('uploads/barbers/' . $filename);
+            }
+
+            $barber->update($updateData);
 
             return ResponseHelper::success($barber, 'Kapster berhasil diupdate', 200);
         } catch (\Exception $e) {
