@@ -12,12 +12,30 @@ class ServiceController extends Controller
     /**
      * Display a listing of services.
      * 
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $services = Service::all();
+            $query = Service::query();
+            
+            // Filter by name (case insensitive)
+            if ($request->has('name') && $request->name != '') {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+            
+            // Filter by min_price
+            if ($request->has('min_price') && $request->min_price != '') {
+                $query->where('price', '>=', $request->min_price);
+            }
+            
+            // Filter by max_price
+            if ($request->has('max_price') && $request->max_price != '') {
+                $query->where('price', '<=', $request->max_price);
+            }
+            
+            $services = $query->get();
             
             return ResponseHelper::success($services, 'Data layanan berhasil diambil', 200);
         } catch (\Exception $e) {
