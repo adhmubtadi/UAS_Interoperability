@@ -33,25 +33,38 @@ $router->group(['middleware' => 'auth', 'namespace' => 'Api'], function () use (
     $router->post('auth/logout', 'AuthController@logout');
     $router->get('auth/profile', 'AuthController@profile');
     
-    // Services
+    // Services (Read Only - Customer dapat akses)
     $router->get('services', 'ServiceController@index');
-    $router->post('services', 'ServiceController@store');
     $router->get('services/{id}', 'ServiceController@show');
-    $router->put('services/{id}', 'ServiceController@update');
-    $router->delete('services/{id}', 'ServiceController@destroy');
     
-    // Barbers
+    // Barbers (Read Only - Customer dapat akses)
     $router->get('barbers', 'BarberController@index');
-    $router->post('barbers', 'BarberController@store');
     $router->get('barbers/{id}', 'BarberController@show');
-    $router->put('barbers/{id}', 'BarberController@update');
-    $router->patch('barbers/{id}/status', 'BarberController@updateStatus');
-    $router->delete('barbers/{id}', 'BarberController@destroy');
     
-    // Bookings
+    // Bookings (Customer dapat akses semua)
     $router->get('bookings', 'BookingController@index');
     $router->post('bookings', 'BookingController@store');
     $router->get('bookings/available-slots', 'BookingController@getAvailableSlots');
     $router->get('bookings/{id}', 'BookingController@show');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Only Routes (Require Authentication + Admin Role)
+|--------------------------------------------------------------------------
+*/
+$router->group(['middleware' => ['auth', 'admin'], 'namespace' => 'Api'], function () use ($router) {
+    // Services Management (Admin Only)
+    $router->post('services', 'ServiceController@store');
+    $router->put('services/{id}', 'ServiceController@update');
+    $router->delete('services/{id}', 'ServiceController@destroy');
+    
+    // Barbers Management (Admin Only)
+    $router->post('barbers', 'BarberController@store');
+    $router->put('barbers/{id}', 'BarberController@update');
+    $router->patch('barbers/{id}/status', 'BarberController@updateStatus');
+    $router->delete('barbers/{id}', 'BarberController@destroy');
+    
+    // Booking Management (Admin Only)
     $router->patch('bookings/{id}/status', 'BookingController@updateStatus');
 });
