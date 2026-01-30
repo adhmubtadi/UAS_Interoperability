@@ -12,12 +12,25 @@ class BarberController extends Controller
     /**
      * Display a listing of barbers.
      * 
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $barbers = Barber::all();
+            $query = Barber::query();
+            
+            // Filter by name (case insensitive)
+            if ($request->has('name') && $request->name != '') {
+                $query->where('name', 'like', '%' . $request->name . '%');
+            }
+            
+            // Filter by status
+            if ($request->has('status') && $request->status != '') {
+                $query->where('status', $request->status);
+            }
+            
+            $barbers = $query->get();
             
             return ResponseHelper::success($barbers, 'Data kapster berhasil diambil', 200);
         } catch (\Exception $e) {
